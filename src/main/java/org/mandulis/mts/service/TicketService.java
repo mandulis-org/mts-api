@@ -7,7 +7,7 @@ import org.mandulis.mts.entity.Ticket;
 import org.mandulis.mts.repository.TicketRepository;
 import org.mandulis.mts.repository.UserRepository;
 import org.mandulis.mts.dto.TicketRequest;
-import org.mandulis.mts.dto.TicketResponse;
+import org.mandulis.mts.dto.LinkedTicketResponse;
 import org.mandulis.mts.entity.spec.TicketSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,18 +33,18 @@ public class TicketService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<TicketResponse> findAll() {
+    public List<LinkedTicketResponse> findAll() {
         return ticketRepository.findAll().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public Optional<TicketResponse> findById(Long id) {
+    public Optional<LinkedTicketResponse> findById(Long id) {
         return ticketRepository.findById(id)
                 .map(this::convertToResponseDTO);
     }
 
-    public TicketResponse save(TicketRequest ticketRequest) {
+    public LinkedTicketResponse save(TicketRequest ticketRequest) {
         Ticket ticket = convertToEntity(ticketRequest);
         return convertToResponseDTO(ticketRepository.save(ticket));
     }
@@ -57,13 +57,13 @@ public class TicketService {
 
     @PreAuthorize("@securityService.isAssignedToTicket(#id, authentication.principal) or" +
             " @securityService.isAdmin(authentication.principal)")
-    public TicketResponse update(TicketRequest ticketRequest, Long id) {
+    public LinkedTicketResponse update(TicketRequest ticketRequest, Long id) {
         Ticket ticket = convertToEntity(ticketRequest);
         ticket.setId(id);
         return convertToResponseDTO(ticketRepository.save(ticket));
     }
 
-    public List<TicketResponse> filterTickets(
+    public List<LinkedTicketResponse> filterTickets(
             String title,
             String categoryName,
             Ticket.Priority priority,
@@ -116,24 +116,24 @@ public class TicketService {
         return ticket;
     }
 
-    private TicketResponse convertToResponseDTO(Ticket ticket) {
-        TicketResponse ticketResponse = new TicketResponse();
-        ticketResponse.setId(ticket.getId());
-        ticketResponse.setTitle(ticket.getTitle());
-        ticketResponse.setDescription(ticket.getDescription());
-        ticketResponse.setPriority(ticket.getPriority());
-        ticketResponse.setUserName(ticket.getRequester().getUsername());
-        ticketResponse.setCategoryName(ticket.getCategory().getName());
-        ticketResponse.setComments(ticket.getComments()
+    private LinkedTicketResponse convertToResponseDTO(Ticket ticket) {
+        LinkedTicketResponse linkedTicketResponse = new LinkedTicketResponse();
+        linkedTicketResponse.setId(ticket.getId());
+        linkedTicketResponse.setTitle(ticket.getTitle());
+        linkedTicketResponse.setDescription(ticket.getDescription());
+        linkedTicketResponse.setPriority(ticket.getPriority());
+        linkedTicketResponse.setUserName(ticket.getRequester().getUsername());
+        linkedTicketResponse.setCategoryName(ticket.getCategory().getName());
+        linkedTicketResponse.setComments(ticket.getComments()
                 .stream()
                 .map(Comment::getContent)
                 .collect(Collectors.toList()));
-        ticketResponse.setAttachments(ticket.getAttachments()
+        linkedTicketResponse.setAttachments(ticket.getAttachments()
                 .stream()
                 .map(Attachment::getFileName)
                 .collect(Collectors.toList()));
-        ticketResponse.setCreatedDate(ticket.getCreatedAt());
-        ticketResponse.setUpdatedDate(ticket.getUpdatedAt());
-        return ticketResponse;
+        linkedTicketResponse.setCreatedDate(ticket.getCreatedAt());
+        linkedTicketResponse.setUpdatedDate(ticket.getUpdatedAt());
+        return linkedTicketResponse;
     }
 }

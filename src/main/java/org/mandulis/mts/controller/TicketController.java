@@ -3,7 +3,7 @@ package org.mandulis.mts.controller;
 import org.mandulis.mts.entity.Ticket;
 import org.mandulis.mts.service.TicketService;
 import org.mandulis.mts.dto.TicketRequest;
-import org.mandulis.mts.dto.TicketResponse;
+import org.mandulis.mts.dto.LinkedTicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +23,17 @@ public class TicketController {
     }
 
     @GetMapping
-    public List<TicketResponse> findAll() {
+    public List<LinkedTicketResponse> findAll() {
         return ticketService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<TicketResponse> findById(@PathVariable Long id) {
+    public Optional<LinkedTicketResponse> findById(@PathVariable Long id) {
         return ticketService.findById(id);
     }
 
     @PostMapping
-    public TicketResponse save(@RequestBody TicketRequest ticketRequest) {
+    public LinkedTicketResponse save(@RequestBody TicketRequest ticketRequest) {
         return ticketService.save(ticketRequest);
     }
 
@@ -43,12 +43,12 @@ public class TicketController {
     }
 
     @PutMapping("/{id}")
-    public TicketResponse update(@RequestBody TicketRequest ticketRequest, @PathVariable Long id) {
+    public LinkedTicketResponse update(@RequestBody TicketRequest ticketRequest, @PathVariable Long id) {
         return ticketService.update(ticketRequest, id);
     }
 
     @GetMapping("/filter")
-    public List<TicketResponse> filterTickets(
+    public List<LinkedTicketResponse> filterTickets(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) Ticket.Priority priority,

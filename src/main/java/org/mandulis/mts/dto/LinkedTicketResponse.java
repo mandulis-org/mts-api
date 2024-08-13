@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TicketResponse {
+public class LinkedTicketResponse {
     private Long id;
     private String title;
     private String description;
